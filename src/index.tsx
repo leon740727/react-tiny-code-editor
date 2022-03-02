@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 declare const Prism: any;
 
@@ -15,31 +15,27 @@ export default function ({syntax, code, onChange, placeholder, style}: {
 
     useEffect(() => syncScroll(), [code]);
 
-    const editor: React.CSSProperties = {
-        position: 'relative',
-    };
-
     /** 讓重疊的二個元件維持一樣的尺寸 */
     const size: React.CSSProperties = {
         boxSizing: 'border-box',
-        width: '200px',
-        height: '2.7em',
+        width: '100%',
+        height: '3em',
         margin: '0px',
         padding: '0.8em',
         border: '0px',
-        fontSize: '1em',
+        fontSize: '1.1em',
         fontFamily: 'monospace',
         lineHeight: '1.2em',
     }
 
     const common: React.CSSProperties = {
-        position: 'absolute',
         overflow: 'auto',
     }
     
     const input: React.CSSProperties = {
         /** 讓 input 透明地疊在 viewer 上面，只露出 caret */
-        zIndex: 1,
+        position: 'absolute',
+        
         color: 'transparent',
         background: 'transparent',
         caretColor: 'black',
@@ -48,31 +44,32 @@ export default function ({syntax, code, onChange, placeholder, style}: {
         resize: 'none',
     }
 
-    const viewer: React.CSSProperties = {
-        /** 讓 input 透明地疊在 viewer 上面，只露出 caret */
-        zIndex: 0,
-    }
-
     return (
-    <div style={editor}>
-        <textarea ref={inputRef}
-            style={mergeRight([input, common, size, style || {}])} spellCheck='false'
-            onChange={e => onChange(e.target.value)}
-            onScroll={() => syncScroll()}
-            onKeyDown={e => {
-                if (e.code === 'Tab') {
-                    e.preventDefault();
-                    insertText(e.target as HTMLTextAreaElement, '  ');
-                    onChange((e.target as HTMLTextAreaElement).value)
-                }
-            }}
-            placeholder={placeholder}
-        >{code}</textarea>
+    <>
+        <div style={{position: 'relative'}}>
+
+            {/* 沒有這一行，當 Editor 前面沒有可顯示的東西，且有設 margin 時，二個元件不會重疊 */}
+            <div style={{width: '1px', height: '1px'}}/>
+
+            <textarea ref={inputRef}
+                style={mergeRight([input, common, size, style || {}])} spellCheck='false'
+                onChange={e => onChange(e.target.value)}
+                onScroll={() => syncScroll()}
+                onKeyDown={e => {
+                    if (e.code === 'Tab') {
+                        e.preventDefault();
+                        insertText(e.target as HTMLTextAreaElement, '  ');
+                        onChange((e.target as HTMLTextAreaElement).value)
+                    }
+                }}
+                placeholder={placeholder}
+            >{code}</textarea>
+        </div>
         <pre ref={viewerRef}
-            style={mergeRight([viewer, common, size, style || {}])} aria-hidden
+            style={mergeRight([common, size, style || {}])} aria-hidden
             dangerouslySetInnerHTML={{__html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code)}}
         />
-    </div>);
+    </>);
 
     function syncScroll() {
         viewerRef.current!.scrollTop = inputRef.current!.scrollTop;
