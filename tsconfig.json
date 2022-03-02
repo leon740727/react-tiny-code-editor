@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "noImplicitAny": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "module": "commonjs",
+        "outDir": "./dst",
+        "target": "es6",
+        "jsx": "react",
+        "esModuleInterop": true,
+    },
+    "exclude": [
+        "node_modules",
+        "dst",
+    ],
+}
