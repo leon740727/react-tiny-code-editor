@@ -64,7 +64,7 @@ function default_1({ syntax, code, onChange, placeholder, style }) {
                     insertText(e.target, '  ');
                     onChange(e.target.value);
                 }
-            }, placeholder: placeholder }),
+            }, placeholder: placeholder }, code),
         React.createElement("pre", { ref: viewerRef, style: mergeRight([viewer, common, size, style || {}]), "aria-hidden": true, dangerouslySetInnerHTML: { __html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code) } })));
     function syncScroll() {
         viewerRef.current.scrollTop = inputRef.current.scrollTop;

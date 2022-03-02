@@ -67,7 +67,7 @@ export default function ({syntax, code, onChange, placeholder, style}: {
                 }
             }}
             placeholder={placeholder}
-        />
+        >{code}</textarea>
         <pre ref={viewerRef}
             style={mergeRight([viewer, common, size, style || {}])} aria-hidden
             dangerouslySetInnerHTML={{__html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code)}}
