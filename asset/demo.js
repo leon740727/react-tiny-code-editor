@@ -29927,13 +29927,13 @@ function default_1({ syntax, code, onChange, placeholder, style }) {
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { style: { position: 'relative' } },
             React.createElement("div", { style: { width: '1px', height: '1px' } }),
-            React.createElement("textarea", { ref: inputRef, style: mergeRight([input, common, size, style || {}]), spellCheck: 'false', onChange: e => onChange(e.target.value), onScroll: () => syncScroll(), onKeyDown: e => {
+            React.createElement("textarea", { ref: inputRef, style: mergeRight([input, common, size, style || {}]), spellCheck: 'false', value: code, onChange: e => onChange(e.target.value), onScroll: () => syncScroll(), onKeyDown: e => {
                     if (e.code === 'Tab') {
                         e.preventDefault();
                         insertText(e.target, '  ');
                         onChange(e.target.value);
                     }
-                }, placeholder: placeholder }, code)),
+                }, placeholder: placeholder })),
         React.createElement("pre", { ref: viewerRef, style: mergeRight([common, size, style || {}]), "aria-hidden": true, dangerouslySetInnerHTML: { __html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code) } })));
     function syncScroll() {
         viewerRef.current.scrollTop = inputRef.current.scrollTop;

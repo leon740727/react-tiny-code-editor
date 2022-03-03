@@ -53,6 +53,7 @@ export default function ({syntax, code, onChange, placeholder, style}: {
 
             <textarea ref={inputRef}
                 style={mergeRight([input, common, size, style || {}])} spellCheck='false'
+                value={code}
                 onChange={e => onChange(e.target.value)}
                 onScroll={() => syncScroll()}
                 onKeyDown={e => {
@@ -63,7 +64,7 @@ export default function ({syntax, code, onChange, placeholder, style}: {
                     }
                 }}
                 placeholder={placeholder}
-            >{code}</textarea>
+            />
         </div>
         <pre ref={viewerRef}
             style={mergeRight([common, size, style || {}])} aria-hidden
