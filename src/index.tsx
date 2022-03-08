@@ -1,19 +1,36 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 declare const Prism: any;
 
-export default function ({syntax, code, onChange, placeholder, style}: {
+export default function ({syntax, code, onChange, autoResizeWidth, autoResizeHeight, placeholder, style}: {
     syntax: string,
     code: string,
     onChange: (code: string) => void,
+    autoResizeWidth?: boolean,
+    autoResizeHeight?: boolean,
     placeholder?: string,
     style?: React.CSSProperties,
 }) {
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const viewerRef = useRef<HTMLPreElement>(null);
+    const [autoSize, setAutoSize] = useState<React.CSSProperties>({});
 
     useEffect(() => syncScroll(), [code]);
+    useEffect(() => {
+        const scrollWidth = inputRef.current!.scrollWidth;
+        const scrollHeight = inputRef.current!.scrollHeight;
+        let style: React.CSSProperties = {};
+        if (autoResizeWidth) {
+            style.minWidth = scrollWidth;
+            style.overflowX = 'hidden';
+        }
+        if (autoResizeHeight) {
+            style.minHeight = scrollHeight;
+            style.overflowY = 'hidden';
+        }
+        setAutoSize(style)
+    }, [code]);
 
     /** 讓重疊的二個元件維持一樣的尺寸 */
     const size: React.CSSProperties = {
@@ -52,7 +69,7 @@ export default function ({syntax, code, onChange, placeholder, style}: {
             <div style={{width: '1px', height: '1px'}}/>
 
             <textarea ref={inputRef}
-                style={mergeRight([input, common, size, style || {}])} spellCheck='false'
+                style={mergeRight([input, common, size, style || {}, autoSize])} spellCheck='false'
                 value={code}
                 onChange={e => onChange(e.target.value)}
                 onScroll={() => syncScroll()}
@@ -67,7 +84,7 @@ export default function ({syntax, code, onChange, placeholder, style}: {
             />
         </div>
         <pre ref={viewerRef}
-            style={mergeRight([common, size, style || {}])} aria-hidden
+            style={mergeRight([common, size, style || {}, autoSize])} aria-hidden
             dangerouslySetInnerHTML={{__html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code)}}
         />
     </>);

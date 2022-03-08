@@ -29848,11 +29848,12 @@ const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js"
 const react_dom_1 = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 const index_1 = __importDefault(__webpack_require__(/*! ./index */ "./src/index.tsx"));
 function Root() {
-    const [code, setCode] = (0, react_1.useState)('');
+    const [code1, setCode1] = (0, react_1.useState)('');
+    const [code2, setCode2] = (0, react_1.useState)('');
     return (React.createElement("div", null,
-        React.createElement(index_1.default, { code: code, syntax: 'js', onChange: setCode, placeholder: '\u8ACB\u8F38\u5165 code', style: {
-                width: '50%',
-                height: '5em',
+        React.createElement(index_1.default, { code: code1, syntax: 'js', onChange: setCode1, placeholder: '\u8ACB\u8F38\u5165 code', autoResizeHeight: true, autoResizeWidth: true, style: {
+                width: '30%',
+                height: '3em',
                 border: '1px solid gray',
                 borderRadius: '5px',
                 padding: '0.8em',
@@ -29860,7 +29861,17 @@ function Root() {
                 marginTop: '10px',
                 marginBottom: '10px',
             } }),
-        React.createElement("div", null, "end")));
+        React.createElement("hr", null),
+        React.createElement(index_1.default, { code: code2, syntax: 'js', onChange: setCode2, placeholder: '\u8ACB\u8F38\u5165 code', style: {
+                width: '30%',
+                height: '3em',
+                border: '1px solid gray',
+                borderRadius: '5px',
+                padding: '0.8em',
+                fontSize: '1.2em',
+                marginTop: '10px',
+                marginBottom: '10px',
+            } })));
 }
 (0, react_dom_1.render)(React.createElement(Root, null), document.getElementById('root'));
 
@@ -29896,10 +29907,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const React = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-function default_1({ syntax, code, onChange, placeholder, style }) {
+function default_1({ syntax, code, onChange, autoResizeWidth, autoResizeHeight, placeholder, style }) {
     const inputRef = (0, react_1.useRef)(null);
     const viewerRef = (0, react_1.useRef)(null);
+    const [autoSize, setAutoSize] = (0, react_1.useState)({});
     (0, react_1.useEffect)(() => syncScroll(), [code]);
+    (0, react_1.useEffect)(() => {
+        const scrollWidth = inputRef.current.scrollWidth;
+        const scrollHeight = inputRef.current.scrollHeight;
+        let style = {};
+        if (autoResizeWidth) {
+            style.minWidth = scrollWidth;
+            style.overflowX = 'hidden';
+        }
+        if (autoResizeHeight) {
+            style.minHeight = scrollHeight;
+            style.overflowY = 'hidden';
+        }
+        setAutoSize(style);
+    }, [code]);
     /** 讓重疊的二個元件維持一樣的尺寸 */
     const size = {
         boxSizing: 'border-box',
@@ -29927,14 +29953,14 @@ function default_1({ syntax, code, onChange, placeholder, style }) {
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { style: { position: 'relative' } },
             React.createElement("div", { style: { width: '1px', height: '1px' } }),
-            React.createElement("textarea", { ref: inputRef, style: mergeRight([input, common, size, style || {}]), spellCheck: 'false', value: code, onChange: e => onChange(e.target.value), onScroll: () => syncScroll(), onKeyDown: e => {
+            React.createElement("textarea", { ref: inputRef, style: mergeRight([input, common, size, style || {}, autoSize]), spellCheck: 'false', value: code, onChange: e => onChange(e.target.value), onScroll: () => syncScroll(), onKeyDown: e => {
                     if (e.code === 'Tab') {
                         e.preventDefault();
                         insertText(e.target, '  ');
                         onChange(e.target.value);
                     }
                 }, placeholder: placeholder })),
-        React.createElement("pre", { ref: viewerRef, style: mergeRight([common, size, style || {}]), "aria-hidden": true, dangerouslySetInnerHTML: { __html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code) } })));
+        React.createElement("pre", { ref: viewerRef, style: mergeRight([common, size, style || {}, autoSize]), "aria-hidden": true, dangerouslySetInnerHTML: { __html: highlight(syntax, code.endsWith('\n') ? code + ' ' : code) } })));
     function syncScroll() {
         viewerRef.current.scrollTop = inputRef.current.scrollTop;
         viewerRef.current.scrollLeft = inputRef.current.scrollLeft;
